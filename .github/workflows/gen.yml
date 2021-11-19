@@ -11,3 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./actions
+        with:
+          uma: 50,10,-10,-30
+          record: ./day

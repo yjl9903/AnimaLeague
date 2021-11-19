@@ -6,6 +6,10 @@ inputs:
     required: true
     description: 'uma'
     default: '50,10,-10,-30'
+  record:
+    required: true
+    description: 'Directory for records'
+    default: './day'
 runs:
   using: 'node12'
   main: './dist/index.js'
