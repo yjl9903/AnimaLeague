@@ -4969,14 +4969,14 @@ function parsePt(score) {
 }
 function printRecords(records) {
     for (const record of records) {
-        core.startGroup(`Day ${record.day}, Round ${record.round} - Winner ${record.rank[0].name}`);
+        core.startGroup(`Day ${(0, kolorist_1.bold)(record.day)}, Round ${(0, kolorist_1.bold)(record.round)} - ${(0, kolorist_1.blue)('Winner')} ${record.rank[0].name}`);
         const maxScoreLen = record.rank.reduce((mx, { score }) => Math.max(mx, score.toString().length), 0);
         const ptLen = record.rank.reduce((mx, { pt }) => Math.max(mx, parsePt(pt).length), 0);
         for (let i = 0; i < 4; i++) {
             const { name, score, pt } = record.rank[i];
-            core.info(`${i + 1} ${name}: ${score
+            core.info(`${i + 1} ${name}: ${(0, kolorist_1.bold)(score
                 .toString()
-                .padStart(maxScoreLen, " ")} ${parsePt(pt).padStart(ptLen, " ")}`);
+                .padStart(maxScoreLen, " "))} ${parsePt(pt).padStart(ptLen, " ")}`);
         }
         core.endGroup();
     }

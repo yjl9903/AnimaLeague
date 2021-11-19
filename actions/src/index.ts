@@ -2,7 +2,7 @@ import * as path from "path";
 import * as core from "@actions/core";
 import klaw from "klaw";
 import { readFile } from "fs-extra";
-import { red, green } from "kolorist";
+import { bold, blue, red, green } from "kolorist";
 
 import { IRank, IRecord } from "./types";
 
@@ -72,7 +72,7 @@ function parsePt(score: number) {
 function printRecords(records: IRecord[]) {
   for (const record of records) {
     core.startGroup(
-      `Day ${record.day}, Round ${record.round} - Winner ${record.rank[0].name}`
+      `Day ${bold(record.day)}, Round ${bold(record.round)} - ${blue('Winner')} ${record.rank[0].name}`
     );
     const maxScoreLen = record.rank.reduce(
       (mx, { score }) => Math.max(mx, score.toString().length),
@@ -85,9 +85,9 @@ function printRecords(records: IRecord[]) {
     for (let i = 0; i < 4; i++) {
       const { name, score, pt } = record.rank[i];
       core.info(
-        `${i + 1} ${name}: ${score
+        `${i + 1} ${name}: ${bold(score
           .toString()
-          .padStart(maxScoreLen, " ")} ${parsePt(pt).padStart(ptLen, " ")}`
+          .padStart(maxScoreLen, " "))} ${parsePt(pt).padStart(ptLen, " ")}`
       );
     }
     core.endGroup();
