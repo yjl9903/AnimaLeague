@@ -4998,6 +4998,8 @@ function printSummary(records) {
             addTo(rank.name, rank.pt);
         }
     }
+    if (report.size === 0)
+        return;
     const sorted = [...report.values()].sort((lhs, rhs) => {
         if (lhs.pt !== rhs.pt) {
             return rhs.pt - lhs.pt;
@@ -5009,7 +5011,7 @@ function printSummary(records) {
             return lhs.name.localeCompare(rhs.name);
         }
     });
-    core.startGroup('Summary');
+    core.startGroup(`${(0, kolorist_1.bold)('Summary')} - ${(0, kolorist_1.blue)('Top')} ${sorted[0].name} ${parsePt(sorted[0].pt)}`);
     for (let i = 0; i < sorted.length; i++) {
         const { name, round, pt } = sorted[i];
         core.info(`${i + 1} ${name}: ${(0, kolorist_1.bold)(round)} rounds ${parsePt(pt)}`);
