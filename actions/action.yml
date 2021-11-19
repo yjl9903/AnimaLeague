@@ -2,13 +2,10 @@ name: 'setup-animaleague'
 description: 'Setup AnimaLeague'
 author: 'XLor'
 inputs:
-  root:
-    required: false
-    description: 'The directory of cpany.yml'
-    default: './'
+
 runs:
   using: 'node12'
-  main: 'index.js'
+  main: './dist/index.js'
 branding:
   icon: 'box'  
   color: 'green'

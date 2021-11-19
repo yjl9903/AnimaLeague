@@ -2,18 +2,27 @@
   "name": "animaleage",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "homepage": "https://github.com/yjl9903/AnimaLeague#readme",
+  "bugs": {
+    "url": "https://github.com/yjl9903/AnimaLeague/issues"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yjl9903/AnimaLeague.git"
   },
-  "author": "XLor",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/yjl9903/AnimaLeague/issues"
+  "author": "XLor",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "ncc build ./src/index.ts --source-map --license licenses.txt"
   },
-  "homepage": "https://github.com/yjl9903/AnimaLeague#readme"
+  "dependencies": {
+    "@actions/core": "^1.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^16.10.5",
+    "@vercel/ncc": "^0.31.1",
+    "prettier": "2.4.1",
+    "typescript": "^4.4.4"
+  }
 }
