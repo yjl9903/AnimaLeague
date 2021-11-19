@@ -86,8 +86,6 @@ async function load() {
           rank: parseRecord(content)
         });
       } catch (error) {
-        console.log(error);
-        
         core.error(`In ${filename}, ${error}`);
       }
     }
