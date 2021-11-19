@@ -6,6 +6,10 @@ inputs:
     required: true
     description: 'uma'
     default: '50,10,-10,-30'
+  target:
+    required: true
+    description: 'target score'
+    default: '30000'
   record:
     required: true
     description: 'Directory for records'
