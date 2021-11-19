@@ -9,6 +9,7 @@ specifiers:
   '@vercel/ncc': ^0.31.1
   fs-extra: ^10.0.0
   klaw: ^4.0.1
+  kolorist: ^1.5.0
   prettier: 2.4.1
   typescript: ^4.4.4
 
@@ -17,6 +18,7 @@ dependencies:
   '@svgdotjs/svg.js': 3.1.1
   fs-extra: 10.0.0
   klaw: 4.0.1
+  kolorist: 1.5.0
 
 devDependencies:
   '@types/fs-extra': 9.0.13
@@ -89,6 +91,10 @@ packages:
   /klaw/4.0.1:
     resolution: {integrity: sha512-pgsE40/SvC7st04AHiISNewaIMUbY5V/K8b21ekiPiFoYs/EYSdsGa+FJArB1d441uq4Q8zZyIxvAzkGNlBdRw==}
     engines: {node: '>=14.14.0'}
+    dev: false
+
+  /kolorist/1.5.0:
+    resolution: {integrity: sha512-pPobydIHK884YBtkS/tWSZXpSAEpcMbilyun3KL37ot935qL2HNKm/tI45i/Rd+MxdIWEhm7/LmUQzWZYK+Qhg==}
     dev: false
 
   /prettier/2.4.1:
