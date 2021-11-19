@@ -2,7 +2,10 @@ name: 'setup-animaleague'
 description: 'Setup AnimaLeague'
 author: 'XLor'
 inputs:
-
+  uma:
+    required: true
+    description: 'uma'
+    default: '50,10,-10,-30'
 runs:
   using: 'node12'
   main: './dist/index.js'
