@@ -4954,10 +4954,10 @@ function parseRecord(content) {
     return ranks;
 }
 function parsePt(score) {
-    const base = (Math.abs(score) / 10).toFixed(0);
+    const base = Math.floor(Math.abs(score) / 10);
     const float = Math.abs(score) % 10;
     const text = `${base}.${float}`;
-    if (base === "0" && float === 0) {
+    if (base === 0 && float === 0) {
         return text;
     }
     else if (score > 0) {
@@ -4980,6 +4980,41 @@ function printRecords(records) {
         }
         core.endGroup();
     }
+}
+function printSummary(records) {
+    const report = new Map();
+    const addTo = (name, pt) => {
+        if (report.has(name)) {
+            const r = report.get(name);
+            r.round = r.round + 1;
+            r.pt = r.pt + pt;
+        }
+        else {
+            report.set(name, { name, round: 1, pt });
+        }
+    };
+    for (const record of records) {
+        for (const rank of record.rank) {
+            addTo(rank.name, rank.pt);
+        }
+    }
+    const sorted = [...report.values()].sort((lhs, rhs) => {
+        if (lhs.pt !== rhs.pt) {
+            return rhs.pt - lhs.pt;
+        }
+        else if (lhs.round !== rhs.round) {
+            return rhs.round - rhs.round;
+        }
+        else {
+            return lhs.name.localeCompare(rhs.name);
+        }
+    });
+    core.startGroup('Summary');
+    for (let i = 0; i < sorted.length; i++) {
+        const { name, round, pt } = sorted[i];
+        core.info(`${i + 1} ${name}: ${(0, kolorist_1.bold)(round)} rounds, ${parsePt(pt)}`);
+    }
+    core.endGroup();
 }
 function load() {
     var e_1, _a;
@@ -5022,6 +5057,7 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         const records = yield load();
         printRecords(records);
+        printSummary(records);
     });
 }
 run();

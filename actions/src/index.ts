@@ -57,10 +57,10 @@ function parseRecord(content: string) {
 }
 
 function parsePt(score: number) {
-  const base = (Math.abs(score) / 10).toFixed(0);
+  const base = Math.floor(Math.abs(score) / 10);
   const float = Math.abs(score) % 10;
   const text = `${base}.${float}`;
-  if (base === "0" && float === 0) {
+  if (base === 0 && float === 0) {
     return text;
   } else if (score > 0) {
     return red(`+${text}`);
@@ -94,6 +94,43 @@ function printRecords(records: IRecord[]) {
   }
 }
 
+function printSummary(records: IRecord[]) {
+  const report = new Map<string, { name: string, round: number, pt: number }>();
+
+  const addTo = (name: string, pt: number) => {
+    if (report.has(name)) {
+      const r = report.get(name)!;
+      r.round = r.round + 1;
+      r.pt = r.pt + pt;
+    } else {
+      report.set(name, { name, round: 1, pt });
+    }
+  };
+
+  for (const record of records) {
+    for (const rank of record.rank) {
+      addTo(rank.name, rank.pt);
+    }
+  }
+
+  const sorted = [...report.values()].sort((lhs, rhs) => {
+    if (lhs.pt !== rhs.pt) {
+      return rhs.pt - lhs.pt;
+    } else if (lhs.round !== rhs.round) {
+      return rhs.round - rhs.round;
+    } else {
+      return lhs.name.localeCompare(rhs.name);
+    }
+  });
+
+  core.startGroup('Summary')
+  for (let i = 0; i < sorted.length; i++) {
+    const { name, round, pt } = sorted[i];
+    core.info(`${i + 1} ${name}: ${bold(round)} rounds, ${parsePt(pt)}`);
+  }
+  core.endGroup();
+}
+
 async function load() {
   const records: IRecord[] = [];
 
@@ -123,6 +160,7 @@ async function load() {
 async function run() {
   const records = await load();
   printRecords(records);
+  printSummary(records);
 }
 
 run();
