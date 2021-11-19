@@ -126,7 +126,7 @@ function printSummary(records: IRecord[]) {
   core.startGroup('Summary')
   for (let i = 0; i < sorted.length; i++) {
     const { name, round, pt } = sorted[i];
-    core.info(`${i + 1} ${name}: ${bold(round)} rounds, ${parsePt(pt)}`);
+    core.info(`${i + 1} ${name}: ${bold(round)} rounds ${parsePt(pt)}`);
   }
   core.endGroup();
 }
