@@ -48717,22 +48717,29 @@ const utils_1 = __nccwpck_require__(1725);
 const FontMappings = {};
 function selectFont(type = 'normal') {
     for (const font in FontMappings) {
-        if (font.startsWith("OpenSans"))
+        if (font.startsWith('OpenSans'))
             continue;
-        return font;
+        if (type === 'mono') {
+            if (font.toLowerCase().includes(type)) {
+                return font;
+            }
+        }
+        else {
+            return font;
+        }
     }
     return undefined;
 }
 function setupFonts() {
     var e_1, _a;
     return __awaiter(this, void 0, void 0, function* () {
-        const FontsDir = path.join(process.cwd(), core.getInput("font"));
+        const FontsDir = path.join(process.cwd(), core.getInput('font'));
         try {
             for (var _b = __asyncValues((0, klaw_1.default)(FontsDir)), _c; _c = yield _b.next(), !_c.done;) {
                 const file = _c.value;
                 if (file.stats.isFile()) {
                     const basename = path.basename(file.path);
-                    const font = basename.trim().replace(/\.[^/.]+$/, "");
+                    const font = basename.trim().replace(/\.[^/.]+$/, '');
                     FontMappings[font] = basename;
                 }
             }
@@ -48744,10 +48751,7 @@ function setupFonts() {
             }
             finally { if (e_1) throw e_1.error; }
         }
-        svgdom_1.config
-            .setFontDir(FontsDir)
-            .setFontFamilyMappings(FontMappings)
-            .preloadFonts();
+        svgdom_1.config.setFontDir(FontsDir).setFontFamilyMappings(FontMappings).preloadFonts();
     });
 }
 exports.setupFonts = setupFonts;
@@ -48766,51 +48770,49 @@ function draw(record) {
     //   .rect(Width, Height)
     //   .fill("white")
     //   .stroke({ color: "#f06", opacity: 0.6, width: 5 });
-    const text = (t) => canvas.text(t).font({
-        family: selectFont(),
+    const text = (t, family = 'mono') => canvas.text(t).font({
+        family: selectFont(family),
         size: FontSize,
-        anchor: "middle",
-        leading: "1.5em",
+        anchor: 'middle',
+        leading: '1.5em'
     });
-    const RankPos = Padding;
+    const RankPos = Padding + 20;
     const AnimalPos = 120;
     const ScorePos = 240;
-    const PTPos = 450;
-    const Rank = text("顺位")
-        .font("size", 24)
+    const PTPos = 420;
+    const Rank = text('顺位')
+        .font('size', 24)
         .move(RankPos, FontOffset + Padding);
-    const Animal = text("动物")
-        .font("size", 24)
+    const Animal = text('动物')
+        .font('size', 24)
         .move(AnimalPos, FontOffset + Padding);
-    text("得点")
-        .font("size", 24)
+    text('得点')
+        .font('size', 24)
         .move(ScorePos, FontOffset + Padding);
-    text("PT")
-        .font("size", 24)
+    text('PT')
+        .font('size', 24)
         .move(PTPos, FontOffset + Padding);
     for (let i = 0; i < record.rank.length; i++) {
         const line = canvas
             .line(Padding, Padding + (i + 1) * LineHeight, Width - Padding, Padding + (i + 1) * LineHeight)
-            .stroke({ width: 1, color: "#2c3e50" })
+            .stroke({ width: 1, color: '#2c3e50' })
             .dy(FontOffset - 16);
         if (i === 0) {
             line.stroke({ width: 2 });
         }
         const DY = FontOffset + FontOffset - 20;
-        const rank = text(`${i + 1}`);
-        rank.move(RankPos + (Rank.length() - rank.length()) / 2, Padding + (i + 1) * LineHeight + DY);
-        const animal = text(`${record.rank[i].name}`)
-            .move(AnimalPos, Padding + (i + 1) * LineHeight)
-            .dy(DY);
-        animal.dx((Animal.length() - animal.length()) / 2);
-        text(`${record.rank[i].score}`)
+        const rank = text(`${i + 1}`, 'mono').move(RankPos, Padding + (i + 1) * LineHeight);
+        rank.dx((Rank.length() - rank.length()) / 2).dy(DY);
+        const animal = text(`${record.rank[i].name}`).move(AnimalPos, Padding + (i + 1) * LineHeight);
+        animal.dx((Animal.length() - animal.length()) / 2).dy(DY);
+        text(`${record.rank[i].score}`, 'mono')
             .move(ScorePos, Padding + (i + 1) * LineHeight)
             .dy(DY);
         const parsedPt = (0, utils_1.parsePt)(record.rank[i].pt, false);
-        text(`${parsedPt}`)
+        text(`${parsedPt}`, 'mono')
             .move(PTPos, Padding + (i + 1) * LineHeight)
             .dy(DY)
-            .fill(parsedPt.startsWith("-") ? "green" : "red");
+            .fill(parsedPt.startsWith('-') ? 'green' : 'red');
     }
     // get your svg as string
     return canvas.svg();
@@ -48871,16 +48873,16 @@ const fs_extra_1 = __nccwpck_require__(9938);
 const kolorist_1 = __nccwpck_require__(1457);
 const draw_1 = __nccwpck_require__(8323);
 const utils_1 = __nccwpck_require__(1725);
-const RecordDir = path.join(process.cwd(), core.getInput("record"));
-const OutDir = path.join(process.cwd(), core.getInput("outdir"));
+const RecordDir = path.join(process.cwd(), core.getInput('record'));
+const OutDir = path.join(process.cwd(), core.getInput('outdir'));
 function printRecords(records) {
     for (const record of records) {
-        core.startGroup(`Day ${(0, kolorist_1.bold)(record.day)}, Round ${(0, kolorist_1.bold)(record.round)} - ${(0, kolorist_1.blue)("Winner")} ${record.rank[0].name}`);
+        core.startGroup(`Day ${(0, kolorist_1.bold)(record.day)}, Round ${(0, kolorist_1.bold)(record.round)} - ${(0, kolorist_1.blue)('Winner')} ${record.rank[0].name}`);
         const maxScoreLen = record.rank.reduce((mx, { score }) => Math.max(mx, score.toString().length), 0);
         const ptLen = record.rank.reduce((mx, { pt }) => Math.max(mx, (0, utils_1.parsePt)(pt).length), 0);
         for (let i = 0; i < 4; i++) {
             const { name, score, pt } = record.rank[i];
-            core.info(`${i + 1} ${name}: ${(0, kolorist_1.bold)(score.toString().padStart(maxScoreLen, " "))} ${(0, utils_1.parsePt)(pt).padStart(ptLen, " ")}`);
+            core.info(`${i + 1} ${name}: ${(0, kolorist_1.bold)(score.toString().padStart(maxScoreLen, ' '))} ${(0, utils_1.parsePt)(pt).padStart(ptLen, ' ')}`);
         }
         core.endGroup();
     }
@@ -48915,7 +48917,7 @@ function printSummary(records) {
             return lhs.name.localeCompare(rhs.name);
         }
     });
-    core.startGroup(`${(0, kolorist_1.bold)("Summary")} - ${(0, kolorist_1.blue)("Top")} ${sorted[0].name} ${(0, utils_1.parsePt)(sorted[0].pt)}`);
+    core.startGroup(`${(0, kolorist_1.bold)('Summary')} - ${(0, kolorist_1.blue)('Top')} ${sorted[0].name} ${(0, utils_1.parsePt)(sorted[0].pt)}`);
     for (let i = 0; i < sorted.length; i++) {
         const { name, round, pt } = sorted[i];
         core.info(`${i + 1} ${name}: ${(0, kolorist_1.bold)(round)} rounds ${(0, utils_1.parsePt)(pt)}`);
@@ -48933,17 +48935,14 @@ function load() {
                     const filename = path.basename(file.path);
                     const [day, round] = filename
                         .trim()
-                        .replace(/\.[^/.]+$/, "")
-                        .split("-");
+                        .replace(/\.[^/.]+$/, '')
+                        .split('-');
                     try {
-                        const content = (yield (0, fs_extra_1.readFile)(file.path))
-                            .toString()
-                            .replace(/\r?\n/, "\n")
-                            .trim();
+                        const content = (yield (0, fs_extra_1.readFile)(file.path)).toString().replace(/\r?\n/, '\n').trim();
                         records.push({
                             day: Number.parseInt(day),
                             round: Number.parseInt(round),
-                            rank: (0, utils_1.parseRecord)(content),
+                            rank: (0, utils_1.parseRecord)(content)
                         });
                     }
                     catch (error) {
@@ -49015,17 +49014,17 @@ exports.parsePt = exports.parseRecord = void 0;
 const core = __importStar(__nccwpck_require__(5924));
 const kolorist_1 = __nccwpck_require__(1457);
 const Uma = core
-    .getInput("uma")
+    .getInput('uma')
     .trim()
-    .split(",")
+    .split(',')
     .map((t) => Number.parseInt(t.trim()));
-const TargetScore = Number.parseInt(core.getInput("target").trim());
+const TargetScore = Number.parseInt(core.getInput('target').trim());
 function parseRecord(content) {
     const ranks = [];
-    for (const row of content.split("\n")) {
+    for (const row of content.split('\n')) {
         const splited = row
             .trim()
-            .split(",")
+            .split(',')
             .map((t) => t.trim());
         if (splited.length !== 2) {
             throw new Error(`Load Rank Error at: "${row}"`);
@@ -49034,7 +49033,7 @@ function parseRecord(content) {
         ranks.push({
             name,
             score: Number.parseInt(score),
-            pt: 0,
+            pt: 0
         });
     }
     if (ranks.length !== 4) {
@@ -49050,8 +49049,7 @@ function parseRecord(content) {
         }
     }
     for (let i = 0; i < 4; i++) {
-        ranks[i].pt =
-            Math.round((ranks[i].score - TargetScore) / 100) + Uma[i] * 10;
+        ranks[i].pt = Math.round((ranks[i].score - TargetScore) / 100) + Uma[i] * 10;
     }
     return ranks;
 }

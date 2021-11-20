@@ -13,7 +13,13 @@ const FontMappings: Record<string, string> = {};
 function selectFont(type: 'normal' | 'mono' = 'normal') {
   for (const font in FontMappings) {
     if (font.startsWith('OpenSans')) continue;
-    return font;
+    if (type === 'mono') {
+      if (font.toLowerCase().includes(type)) {
+        return font;
+      }
+    } else {
+      return font;
+    }
   }
   return undefined;
 }
@@ -49,18 +55,18 @@ export function draw(record: IRecord) {
   //   .fill("white")
   //   .stroke({ color: "#f06", opacity: 0.6, width: 5 });
 
-  const text = (t: string) =>
+  const text = (t: string, family: 'mono' = 'mono') =>
     canvas.text(t).font({
-      family: selectFont(),
+      family: selectFont(family),
       size: FontSize,
       anchor: 'middle',
       leading: '1.5em'
     });
 
-  const RankPos = Padding;
+  const RankPos = Padding + 20;
   const AnimalPos = 120;
   const ScorePos = 240;
-  const PTPos = 450;
+  const PTPos = 420;
   const Rank = text('顺位')
     .font('size', 24)
     .move(RankPos, FontOffset + Padding);
@@ -90,18 +96,18 @@ export function draw(record: IRecord) {
 
     const DY = FontOffset + FontOffset - 20;
 
-    const rank = text(`${i + 1}`).move(RankPos, Padding + (i + 1) * LineHeight);
+    const rank = text(`${i + 1}`, 'mono').move(RankPos, Padding + (i + 1) * LineHeight);
     rank.dx((Rank.length() - rank.length()) / 2).dy(DY);
 
     const animal = text(`${record.rank[i].name}`).move(AnimalPos, Padding + (i + 1) * LineHeight);
     animal.dx((Animal.length() - animal.length()) / 2).dy(DY);
 
-    text(`${record.rank[i].score}`)
+    text(`${record.rank[i].score}`, 'mono')
       .move(ScorePos, Padding + (i + 1) * LineHeight)
       .dy(DY);
 
     const parsedPt = parsePt(record.rank[i].pt, false);
-    text(`${parsedPt}`)
+    text(`${parsedPt}`, 'mono')
       .move(PTPos, Padding + (i + 1) * LineHeight)
       .dy(DY)
       .fill(parsedPt.startsWith('-') ? 'green' : 'red');
