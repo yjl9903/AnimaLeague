@@ -18,6 +18,10 @@ inputs:
     required: true
     description: 'Directory for record output'
     default: './record'
+  font:
+    required: true
+    description: 'Directory for fonts'
+    default: './fonts'
 runs:
   using: 'node12'
   main: './dist/index.js'

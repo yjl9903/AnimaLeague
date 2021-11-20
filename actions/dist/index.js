@@ -48663,22 +48663,121 @@ exports.fromPromise = function (fn) {
 /***/ }),
 
 /***/ 8323:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __asyncValues = (this && this.__asyncValues) || function (o) {
+    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
+    var m = o[Symbol.asyncIterator], i;
+    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
+    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
+    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.draw = void 0;
+exports.draw = exports.setupFonts = void 0;
+const path = __importStar(__nccwpck_require__(5622));
+const core = __importStar(__nccwpck_require__(5924));
+const klaw_1 = __importDefault(__nccwpck_require__(9574));
 // @ts-ignore
 const svgdom_1 = __nccwpck_require__(8609);
 const svg_js_1 = __nccwpck_require__(8915);
+const FontMappings = {};
+function selectFont() {
+    for (const font in FontMappings) {
+        console.log(font);
+        return font;
+    }
+    return undefined;
+}
+function setupFonts() {
+    var e_1, _a;
+    return __awaiter(this, void 0, void 0, function* () {
+        const FontsDir = path.join(process.cwd(), core.getInput("font"));
+        try {
+            for (var _b = __asyncValues((0, klaw_1.default)(FontsDir)), _c; _c = yield _b.next(), !_c.done;) {
+                const file = _c.value;
+                if (file.stats.isFile()) {
+                    const basename = path.basename(file.path);
+                    const font = basename.trim().replace(/\.[^/.]+$/, "");
+                    FontMappings[font] = basename;
+                }
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) yield _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        svgdom_1.config
+            .setFontDir(FontsDir)
+            .setFontFamilyMappings(FontMappings)
+            .preloadFonts();
+    });
+}
+exports.setupFonts = setupFonts;
 function draw(record) {
     const window = (0, svgdom_1.createSVGWindow)();
     const document = window.document;
     (0, svg_js_1.registerWindow)(window, document);
-    const canvas = (0, svg_js_1.SVG)(document.documentElement);
-    // @ts-ignore
-    canvas.rect(100, 100).fill('yellow').move(50, 50);
+    const canvas = (0, svg_js_1.SVG)(document.documentElement).size(450, 300);
+    canvas
+        .rect(450, 300)
+        .fill("white")
+        .stroke({ color: "#f06", opacity: 0.6, width: 5 });
+    for (let i = 0; i < record.rank.length; i++) {
+        canvas
+            .text(`${i + 1}`)
+            .font({
+            family: selectFont(),
+            size: 36,
+            anchor: "middle",
+            leading: "1.5em",
+        })
+            .move(0, i * 60);
+        canvas
+            .text(`${record.rank[i].name}`)
+            .font({
+            family: selectFont(),
+            size: 36,
+            anchor: "middle",
+            leading: "1.5em",
+        })
+            .move(60, i * 60);
+    }
     // get your svg as string
     return canvas.svg();
 }
@@ -48742,14 +48841,12 @@ const RecordDir = path.join(process.cwd(), core.getInput("record"));
 const OutDir = path.join(process.cwd(), core.getInput("outdir"));
 function printRecords(records) {
     for (const record of records) {
-        core.startGroup(`Day ${(0, kolorist_1.bold)(record.day)}, Round ${(0, kolorist_1.bold)(record.round)} - ${(0, kolorist_1.blue)('Winner')} ${record.rank[0].name}`);
+        core.startGroup(`Day ${(0, kolorist_1.bold)(record.day)}, Round ${(0, kolorist_1.bold)(record.round)} - ${(0, kolorist_1.blue)("Winner")} ${record.rank[0].name}`);
         const maxScoreLen = record.rank.reduce((mx, { score }) => Math.max(mx, score.toString().length), 0);
         const ptLen = record.rank.reduce((mx, { pt }) => Math.max(mx, (0, utils_1.parsePt)(pt).length), 0);
         for (let i = 0; i < 4; i++) {
             const { name, score, pt } = record.rank[i];
-            core.info(`${i + 1} ${name}: ${(0, kolorist_1.bold)(score
-                .toString()
-                .padStart(maxScoreLen, " "))} ${(0, utils_1.parsePt)(pt).padStart(ptLen, " ")}`);
+            core.info(`${i + 1} ${name}: ${(0, kolorist_1.bold)(score.toString().padStart(maxScoreLen, " "))} ${(0, utils_1.parsePt)(pt).padStart(ptLen, " ")}`);
         }
         core.endGroup();
     }
@@ -48784,7 +48881,7 @@ function printSummary(records) {
             return lhs.name.localeCompare(rhs.name);
         }
     });
-    core.startGroup(`${(0, kolorist_1.bold)('Summary')} - ${(0, kolorist_1.blue)('Top')} ${sorted[0].name} ${(0, utils_1.parsePt)(sorted[0].pt)}`);
+    core.startGroup(`${(0, kolorist_1.bold)("Summary")} - ${(0, kolorist_1.blue)("Top")} ${sorted[0].name} ${(0, utils_1.parsePt)(sorted[0].pt)}`);
     for (let i = 0; i < sorted.length; i++) {
         const { name, round, pt } = sorted[i];
         core.info(`${i + 1} ${name}: ${(0, kolorist_1.bold)(round)} rounds ${(0, utils_1.parsePt)(pt)}`);
@@ -48800,7 +48897,10 @@ function load() {
                 const file = _c.value;
                 if (file.stats.isFile()) {
                     const filename = path.basename(file.path);
-                    const [day, round] = filename.trim().replace(/.\s*$/, "").split("-");
+                    const [day, round] = filename
+                        .trim()
+                        .replace(/\.[^/.]+$/, "")
+                        .split("-");
                     try {
                         const content = (yield (0, fs_extra_1.readFile)(file.path))
                             .toString()
@@ -48830,7 +48930,7 @@ function load() {
 }
 function drawRecords(records) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield (0, fs_extra_1.ensureDir)(OutDir);
+        yield (0, draw_1.setupFonts)();
         for (const record of records) {
             const svg = (0, draw_1.draw)(record);
             yield (0, fs_extra_1.writeFile)(path.join(OutDir, `${record.day}-${record.round}.svg`), svg);
