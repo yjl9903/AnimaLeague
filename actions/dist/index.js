@@ -48821,7 +48821,7 @@ function draw(record) {
         for (const s of scores) {
             s.dx(len - s.length() + 12);
         }
-        Score.x(scores[0].x() + scores[0].length() - Score.length() - 12);
+        Score.x(scores[0].x() + scores[0].length() - Score.length() - 20);
     }
     // get your svg as string
     return canvas.svg();
