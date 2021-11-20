@@ -78,7 +78,8 @@ export function draw(record: IRecord) {
     .move(ScorePos, FontOffset + Padding);
   text('PT')
     .font('size', 24)
-    .move(PTPos, FontOffset + Padding);
+    .move(PTPos, FontOffset + Padding)
+    .dx(16);
 
   const scores = [];
 
@@ -118,7 +119,7 @@ export function draw(record: IRecord) {
   {
     const len = scores.reduce((mx, s) => Math.max(mx, s.length()), 0);
     for (const s of scores) {
-      s.dx(len - s.length());
+      s.dx(len - s.length() + 12);
     }
     Score.x(scores[0].x() + scores[0].length() - Score.length() - 12);
   }
