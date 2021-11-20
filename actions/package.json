@@ -14,6 +14,7 @@
   "author": "XLor",
   "main": "dist/index.js",
   "scripts": {
+    "start": "env-cmd node dist/index.js",
     "build": "ncc build ./src/index.ts --source-map --license licenses.txt"
   },
   "dependencies": {
@@ -21,13 +22,15 @@
     "@svgdotjs/svg.js": "^3.1.1",
     "fs-extra": "^10.0.0",
     "klaw": "^4.0.1",
-    "kolorist": "^1.5.0"
+    "kolorist": "^1.5.0",
+    "svgdom": "^0.1.10"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
     "@types/klaw": "^3.0.3",
     "@types/node": "^16.10.5",
     "@vercel/ncc": "^0.31.1",
+    "env-cmd": "^10.1.0",
     "prettier": "2.4.1",
     "typescript": "^4.4.4"
   }

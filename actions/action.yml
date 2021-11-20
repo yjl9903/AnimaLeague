@@ -14,6 +14,10 @@ inputs:
     required: true
     description: 'Directory for records'
     default: './day'
+  outdir:
+    required: true
+    description: 'Directory for record output'
+    default: './record'
 runs:
   using: 'node12'
   main: './dist/index.js'
