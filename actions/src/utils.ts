@@ -51,15 +51,17 @@ export function parseRecord(content: string) {
   return ranks;
 }
 
-export function parsePt(score: number) {
+export function parsePt(score: number, color = true) {
   const base = Math.floor(Math.abs(score) / 10);
   const float = Math.abs(score) % 10;
   const text = `${base}.${float}`;
   if (base === 0 && float === 0) {
     return text;
   } else if (score > 0) {
-    return red(`+${text}`);
+    if (color) return red(`+${text}`);
+    else return `+${text}`;
   } else {
-    return green(`-${text}`);
+    if (color) return green(`-${text}`);
+    else return `-${text}`;
   }
 }

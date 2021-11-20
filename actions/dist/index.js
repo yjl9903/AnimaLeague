@@ -48713,10 +48713,12 @@ const klaw_1 = __importDefault(__nccwpck_require__(9574));
 // @ts-ignore
 const svgdom_1 = __nccwpck_require__(8609);
 const svg_js_1 = __nccwpck_require__(8915);
+const utils_1 = __nccwpck_require__(1725);
 const FontMappings = {};
 function selectFont() {
     for (const font in FontMappings) {
-        console.log(font);
+        if (font.startsWith("OpenSans"))
+            continue;
         return font;
     }
     return undefined;
@@ -48753,30 +48755,61 @@ function draw(record) {
     const window = (0, svgdom_1.createSVGWindow)();
     const document = window.document;
     (0, svg_js_1.registerWindow)(window, document);
-    const canvas = (0, svg_js_1.SVG)(document.documentElement).size(450, 300);
-    canvas
-        .rect(450, 300)
-        .fill("white")
-        .stroke({ color: "#f06", opacity: 0.6, width: 5 });
+    const Width = 600;
+    const Height = 340;
+    const Padding = 20;
+    const LineHeight = Math.round((Height - Padding * 2) / 5);
+    const FontSize = 36;
+    const FontOffset = Math.round((LineHeight - FontSize) / 2);
+    const canvas = (0, svg_js_1.SVG)(document.documentElement).size(Width, Height);
+    // canvas
+    //   .rect(Width, Height)
+    //   .fill("white")
+    //   .stroke({ color: "#f06", opacity: 0.6, width: 5 });
+    const text = (t) => canvas.text(t).font({
+        family: selectFont(),
+        size: FontSize,
+        anchor: "middle",
+        leading: "1.5em",
+    });
+    const RankPos = Padding;
+    const AnimalPos = 120;
+    const ScorePos = 240;
+    const PTPos = 450;
+    text("顺位")
+        .font("size", 24)
+        .move(RankPos, FontOffset + Padding);
+    text("动物")
+        .font("size", 24)
+        .move(AnimalPos, FontOffset + Padding);
+    text("得点")
+        .font("size", 24)
+        .move(ScorePos, FontOffset + Padding);
+    text("PT")
+        .font("size", 24)
+        .move(PTPos, FontOffset + Padding);
     for (let i = 0; i < record.rank.length; i++) {
-        canvas
-            .text(`${i + 1}`)
-            .font({
-            family: selectFont(),
-            size: 36,
-            anchor: "middle",
-            leading: "1.5em",
-        })
-            .move(0, i * 60);
-        canvas
-            .text(`${record.rank[i].name}`)
-            .font({
-            family: selectFont(),
-            size: 36,
-            anchor: "middle",
-            leading: "1.5em",
-        })
-            .move(60, i * 60);
+        const line = canvas
+            .line(Padding, Padding + (i + 1) * LineHeight, Width - Padding, Padding + (i + 1) * LineHeight)
+            .stroke({ width: 1, color: "#2c3e50" })
+            .dy(FontOffset - 16);
+        if (i === 0) {
+            line.stroke({ width: 2 });
+        }
+        text(`${i + 1}`)
+            .move(RankPos, Padding + (i + 1) * LineHeight)
+            .dy(FontOffset + FontOffset - 16);
+        text(`${record.rank[i].name}`)
+            .move(AnimalPos, Padding + (i + 1) * LineHeight)
+            .dy(FontOffset + FontOffset - 16);
+        text(`${record.rank[i].score}`)
+            .move(ScorePos, Padding + (i + 1) * LineHeight)
+            .dy(FontOffset + FontOffset - 16);
+        const parsedPt = (0, utils_1.parsePt)(record.rank[i].pt, false);
+        text(`${parsedPt}`)
+            .move(PTPos, Padding + (i + 1) * LineHeight)
+            .dy(FontOffset + FontOffset - 16)
+            .fill(parsedPt.startsWith("-") ? "green" : "red");
     }
     // get your svg as string
     return canvas.svg();
@@ -49022,7 +49055,7 @@ function parseRecord(content) {
     return ranks;
 }
 exports.parseRecord = parseRecord;
-function parsePt(score) {
+function parsePt(score, color = true) {
     const base = Math.floor(Math.abs(score) / 10);
     const float = Math.abs(score) % 10;
     const text = `${base}.${float}`;
@@ -49030,10 +49063,16 @@ function parsePt(score) {
         return text;
     }
     else if (score > 0) {
-        return (0, kolorist_1.red)(`+${text}`);
+        if (color)
+            return (0, kolorist_1.red)(`+${text}`);
+        else
+            return `+${text}`;
     }
     else {
-        return (0, kolorist_1.green)(`-${text}`);
+        if (color)
+            return (0, kolorist_1.green)(`-${text}`);
+        else
+            return `-${text}`;
     }
 }
 exports.parsePt = parsePt;
