@@ -10,7 +10,7 @@ import { parsePt } from "./utils";
 
 const FontMappings: Record<string, string> = {};
 
-function selectFont() {
+function selectFont(type: 'normal' | 'mono' = 'normal') {
   for (const font in FontMappings) {
     if (font.startsWith("OpenSans")) continue;
     return font;
