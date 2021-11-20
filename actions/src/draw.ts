@@ -1,36 +1,33 @@
-import * as path from "path";
-import * as core from "@actions/core";
-import klaw from "klaw";
+import * as path from 'path';
+import * as core from '@actions/core';
+import klaw from 'klaw';
 // @ts-ignore
-import { createSVGWindow, config } from "svgdom";
-import { SVG, registerWindow } from "@svgdotjs/svg.js";
+import { createSVGWindow, config } from 'svgdom';
+import { SVG, registerWindow } from '@svgdotjs/svg.js';
 
-import { IRecord } from "./types";
-import { parsePt } from "./utils";
+import { IRecord } from './types';
+import { parsePt } from './utils';
 
 const FontMappings: Record<string, string> = {};
 
 function selectFont(type: 'normal' | 'mono' = 'normal') {
   for (const font in FontMappings) {
-    if (font.startsWith("OpenSans")) continue;
+    if (font.startsWith('OpenSans')) continue;
     return font;
   }
   return undefined;
 }
 
 export async function setupFonts() {
-  const FontsDir = path.join(process.cwd(), core.getInput("font"));
+  const FontsDir = path.join(process.cwd(), core.getInput('font'));
   for await (const file of klaw(FontsDir)) {
     if (file.stats.isFile()) {
       const basename = path.basename(file.path);
-      const font = basename.trim().replace(/\.[^/.]+$/, "");
+      const font = basename.trim().replace(/\.[^/.]+$/, '');
       FontMappings[font] = basename;
     }
   }
-  config
-    .setFontDir(FontsDir)
-    .setFontFamilyMappings(FontMappings)
-    .preloadFonts();
+  config.setFontDir(FontsDir).setFontFamilyMappings(FontMappings).preloadFonts();
 }
 
 export function draw(record: IRecord) {
@@ -56,25 +53,25 @@ export function draw(record: IRecord) {
     canvas.text(t).font({
       family: selectFont(),
       size: FontSize,
-      anchor: "middle",
-      leading: "1.5em",
+      anchor: 'middle',
+      leading: '1.5em'
     });
-  
+
   const RankPos = Padding;
   const AnimalPos = 120;
   const ScorePos = 240;
   const PTPos = 450;
-  const Rank = text("顺位")
-    .font("size", 24)
+  const Rank = text('顺位')
+    .font('size', 24)
     .move(RankPos, FontOffset + Padding);
-  const Animal = text("动物")
-    .font("size", 24)
+  const Animal = text('动物')
+    .font('size', 24)
     .move(AnimalPos, FontOffset + Padding);
-  text("得点")
-    .font("size", 24)
+  text('得点')
+    .font('size', 24)
     .move(ScorePos, FontOffset + Padding);
-  text("PT")
-    .font("size", 24)
+  text('PT')
+    .font('size', 24)
     .move(PTPos, FontOffset + Padding);
 
   for (let i = 0; i < record.rank.length; i++) {
@@ -85,7 +82,7 @@ export function draw(record: IRecord) {
         Width - Padding,
         Padding + (i + 1) * LineHeight
       )
-      .stroke({ width: 1, color: "#2c3e50" })
+      .stroke({ width: 1, color: '#2c3e50' })
       .dy(FontOffset - 16);
     if (i === 0) {
       line.stroke({ width: 2 });
@@ -93,13 +90,11 @@ export function draw(record: IRecord) {
 
     const DY = FontOffset + FontOffset - 20;
 
-    const rank = text(`${i + 1}`);
-    rank.move(RankPos + (Rank.length() - rank.length()) / 2, Padding + (i + 1) * LineHeight + DY);
+    const rank = text(`${i + 1}`).move(RankPos, Padding + (i + 1) * LineHeight);
+    rank.dx((Rank.length() - rank.length()) / 2).dy(DY);
 
-    const animal = text(`${record.rank[i].name}`)
-      .move(AnimalPos, Padding + (i + 1) * LineHeight)
-      .dy(DY);
-    animal.dx((Animal.length() - animal.length()) / 2)
+    const animal = text(`${record.rank[i].name}`).move(AnimalPos, Padding + (i + 1) * LineHeight);
+    animal.dx((Animal.length() - animal.length()) / 2).dy(DY);
 
     text(`${record.rank[i].score}`)
       .move(ScorePos, Padding + (i + 1) * LineHeight)
@@ -109,7 +104,7 @@ export function draw(record: IRecord) {
     text(`${parsedPt}`)
       .move(PTPos, Padding + (i + 1) * LineHeight)
       .dy(DY)
-      .fill(parsedPt.startsWith("-") ? "green" : "red");
+      .fill(parsedPt.startsWith('-') ? 'green' : 'red');
   }
 
   // get your svg as string

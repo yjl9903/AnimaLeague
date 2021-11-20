@@ -1,38 +1,35 @@
-import * as path from "path";
-import * as core from "@actions/core";
-import klaw from "klaw";
-import { ensureDir, readFile, writeFile } from "fs-extra";
-import { bold, blue } from "kolorist";
+import * as path from 'path';
+import * as core from '@actions/core';
+import klaw from 'klaw';
+import { ensureDir, readFile, writeFile } from 'fs-extra';
+import { bold, blue } from 'kolorist';
 
-import { IRecord } from "./types";
-import { draw, setupFonts } from "./draw";
-import { parsePt, parseRecord } from "./utils";
+import { IRecord } from './types';
+import { draw, setupFonts } from './draw';
+import { parsePt, parseRecord } from './utils';
 
-const RecordDir = path.join(process.cwd(), core.getInput("record"));
+const RecordDir = path.join(process.cwd(), core.getInput('record'));
 
-const OutDir = path.join(process.cwd(), core.getInput("outdir"));
+const OutDir = path.join(process.cwd(), core.getInput('outdir'));
 
 function printRecords(records: IRecord[]) {
   for (const record of records) {
     core.startGroup(
-      `Day ${bold(record.day)}, Round ${bold(record.round)} - ${blue(
-        "Winner"
-      )} ${record.rank[0].name}`
+      `Day ${bold(record.day)}, Round ${bold(record.round)} - ${blue('Winner')} ${
+        record.rank[0].name
+      }`
     );
     const maxScoreLen = record.rank.reduce(
       (mx, { score }) => Math.max(mx, score.toString().length),
       0
     );
-    const ptLen = record.rank.reduce(
-      (mx, { pt }) => Math.max(mx, parsePt(pt).length),
-      0
-    );
+    const ptLen = record.rank.reduce((mx, { pt }) => Math.max(mx, parsePt(pt).length), 0);
     for (let i = 0; i < 4; i++) {
       const { name, score, pt } = record.rank[i];
       core.info(
-        `${i + 1} ${name}: ${bold(
-          score.toString().padStart(maxScoreLen, " ")
-        )} ${parsePt(pt).padStart(ptLen, " ")}`
+        `${i + 1} ${name}: ${bold(score.toString().padStart(maxScoreLen, ' '))} ${parsePt(
+          pt
+        ).padStart(ptLen, ' ')}`
       );
     }
     core.endGroup();
@@ -70,11 +67,7 @@ function printSummary(records: IRecord[]) {
     }
   });
 
-  core.startGroup(
-    `${bold("Summary")} - ${blue("Top")} ${sorted[0].name} ${parsePt(
-      sorted[0].pt
-    )}`
-  );
+  core.startGroup(`${bold('Summary')} - ${blue('Top')} ${sorted[0].name} ${parsePt(sorted[0].pt)}`);
   for (let i = 0; i < sorted.length; i++) {
     const { name, round, pt } = sorted[i];
     core.info(`${i + 1} ${name}: ${bold(round)} rounds ${parsePt(pt)}`);
@@ -90,17 +83,14 @@ async function load() {
       const filename = path.basename(file.path);
       const [day, round] = filename
         .trim()
-        .replace(/\.[^/.]+$/, "")
-        .split("-");
+        .replace(/\.[^/.]+$/, '')
+        .split('-');
       try {
-        const content = (await readFile(file.path))
-          .toString()
-          .replace(/\r?\n/, "\n")
-          .trim();
+        const content = (await readFile(file.path)).toString().replace(/\r?\n/, '\n').trim();
         records.push({
           day: Number.parseInt(day),
           round: Number.parseInt(round),
-          rank: parseRecord(content),
+          rank: parseRecord(content)
         });
       } catch (error) {
         core.error(`In ${filename}, ${error}`);
@@ -115,10 +105,7 @@ async function drawRecords(records: IRecord[]) {
   await setupFonts();
   for (const record of records) {
     const svg = draw(record);
-    await writeFile(
-      path.join(OutDir, `${record.day}-${record.round}.svg`),
-      svg
-    );
+    await writeFile(path.join(OutDir, `${record.day}-${record.round}.svg`), svg);
   }
 }
 

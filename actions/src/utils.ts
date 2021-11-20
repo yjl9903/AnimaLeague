@@ -1,22 +1,22 @@
-import * as core from "@actions/core";
-import { red, green } from "kolorist";
+import * as core from '@actions/core';
+import { red, green } from 'kolorist';
 
-import { IRank } from "./types";
+import { IRank } from './types';
 
 const Uma = core
-  .getInput("uma")
+  .getInput('uma')
   .trim()
-  .split(",")
+  .split(',')
   .map((t) => Number.parseInt(t.trim()));
 
-const TargetScore = Number.parseInt(core.getInput("target").trim());
+const TargetScore = Number.parseInt(core.getInput('target').trim());
 
 export function parseRecord(content: string) {
   const ranks: IRank[] = [];
-  for (const row of content.split("\n")) {
+  for (const row of content.split('\n')) {
     const splited = row
       .trim()
-      .split(",")
+      .split(',')
       .map((t) => t.trim());
     if (splited.length !== 2) {
       throw new Error(`Load Rank Error at: "${row}"`);
@@ -25,7 +25,7 @@ export function parseRecord(content: string) {
     ranks.push({
       name,
       score: Number.parseInt(score),
-      pt: 0,
+      pt: 0
     });
   }
 
@@ -44,8 +44,7 @@ export function parseRecord(content: string) {
   }
 
   for (let i = 0; i < 4; i++) {
-    ranks[i].pt =
-      Math.round((ranks[i].score - TargetScore) / 100) + Uma[i] * 10;
+    ranks[i].pt = Math.round((ranks[i].score - TargetScore) / 100) + Uma[i] * 10;
   }
 
   return ranks;
