@@ -17,3 +17,5 @@ export interface IRank {
    */
   pt: number;
 }
+
+export type Summary = Array<{ name: string; round: number; pt: number }>;

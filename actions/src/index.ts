@@ -4,8 +4,8 @@ import klaw from 'klaw';
 import { ensureDir, readFile, writeFile } from 'fs-extra';
 import { bold, blue } from 'kolorist';
 
-import { IRecord } from './types';
-import { draw, setupFonts } from './draw';
+import { IRecord, Summary } from './types';
+import { draw, drawSummary, setupFonts } from './draw';
 import { parsePt, parseRecord } from './utils';
 
 const RecordDir = path.join(process.cwd(), core.getInput('record'));
@@ -36,7 +36,7 @@ function printRecords(records: IRecord[]) {
   }
 }
 
-function printSummary(records: IRecord[]) {
+function printSummary(records: IRecord[]): Summary {
   const report = new Map<string, { name: string; round: number; pt: number }>();
 
   const addTo = (name: string, pt: number) => {
@@ -55,8 +55,6 @@ function printSummary(records: IRecord[]) {
     }
   }
 
-  if (report.size === 0) return;
-
   const sorted = [...report.values()].sort((lhs, rhs) => {
     if (lhs.pt !== rhs.pt) {
       return rhs.pt - lhs.pt;
@@ -67,12 +65,16 @@ function printSummary(records: IRecord[]) {
     }
   });
 
+  if (report.size === 0) return sorted;
+
   core.startGroup(`${bold('Summary')} - ${blue('Top')} ${sorted[0].name} ${parsePt(sorted[0].pt)}`);
   for (let i = 0; i < sorted.length; i++) {
     const { name, round, pt } = sorted[i];
     core.info(`${i + 1} ${name}: ${bold(round)} rounds ${parsePt(pt)}`);
   }
   core.endGroup();
+
+  return sorted;
 }
 
 async function load() {
@@ -101,11 +103,15 @@ async function load() {
   return records;
 }
 
-async function drawRecords(records: IRecord[]) {
+async function drawRecords(records: IRecord[], summary: Summary) {
   await setupFonts();
   for (const record of records) {
     const svg = draw(record);
     await writeFile(path.join(OutDir, `${record.day}-${record.round}.svg`), svg);
+  }
+  {
+    const svg = drawSummary(summary);
+    await writeFile(path.join(process.cwd(), `summary.svg`), svg);
   }
 }
 
@@ -114,8 +120,8 @@ async function run() {
   await ensureDir(OutDir);
   const records = await load();
   printRecords(records);
-  printSummary(records);
-  drawRecords(records);
+  const summary = printSummary(records);
+  drawRecords(records, summary);
 }
 
 run();

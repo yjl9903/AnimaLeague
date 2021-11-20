@@ -5,7 +5,7 @@ import klaw from 'klaw';
 import { createSVGWindow, config } from 'svgdom';
 import { SVG, registerWindow } from '@svgdotjs/svg.js';
 
-import { IRecord } from './types';
+import { IRecord, Summary } from './types';
 import { parsePt } from './utils';
 
 const FontMappings: Record<string, string> = {};
@@ -122,6 +122,88 @@ export function draw(record: IRecord) {
       s.dx(len - s.length() + 12);
     }
     Score.x(scores[0].x() + scores[0].length() - Score.length() - 20);
+  }
+
+  // get your svg as string
+  return canvas.svg();
+}
+
+export function drawSummary(summary: Summary) {
+  const window = createSVGWindow();
+  const document = window.document;
+  registerWindow(window, document);
+
+  const Padding = 20;
+  const Width = 600;
+  const LineHeight = 60;
+  const Height = Padding * 2 + LineHeight * (summary.length + 1);
+  const FontSize = 36;
+  const FontOffset = Math.round((LineHeight - FontSize) / 2);
+
+  const canvas = (SVG(document.documentElement) as any).size(Width, Height);
+
+  // canvas
+  //   .rect(Width, Height)
+  //   .fill("white")
+  //   .stroke({ color: "#f06", opacity: 0.6, width: 5 });
+
+  const text = (t: string, family: 'mono' = 'mono') =>
+    canvas.text(t).font({
+      family: selectFont(family),
+      size: FontSize,
+      anchor: 'middle',
+      leading: '1.5em'
+    });
+
+  const RankPos = Padding + 20;
+  const AnimalPos = 120;
+  const ScorePos = 220;
+  const PTPos = 400;
+  const Rank = text('顺位')
+    .font('size', 24)
+    .move(RankPos, FontOffset + Padding);
+  const Animal = text('动物')
+    .font('size', 24)
+    .move(AnimalPos, FontOffset + Padding);
+  text('场数')
+    .font('size', 24)
+    .move(ScorePos, FontOffset + Padding);
+  text('PT')
+    .font('size', 24)
+    .move(PTPos, FontOffset + Padding)
+    .dx(16);
+
+  for (let i = 0; i < summary.length; i++) {
+    const line = canvas
+      .line(
+        Padding,
+        Padding + (i + 1) * LineHeight,
+        Width - Padding,
+        Padding + (i + 1) * LineHeight
+      )
+      .stroke({ width: 1, color: '#2c3e50' })
+      .dy(FontOffset - 16);
+    if (i === 0) {
+      line.stroke({ width: 2 });
+    }
+
+    const DY = FontOffset + FontOffset - 20;
+
+    const rank = text(`${i + 1}`, 'mono').move(RankPos, Padding + (i + 1) * LineHeight);
+    rank.dx((Rank.length() - rank.length()) / 2).dy(DY);
+
+    const animal = text(`${summary[i].name}`).move(AnimalPos, Padding + (i + 1) * LineHeight);
+    animal.dx((Animal.length() - animal.length()) / 2).dy(DY);
+
+    text(`${summary[i].round}`, 'mono')
+      .move(ScorePos, Padding + (i + 1) * LineHeight)
+      .dy(DY);
+
+    const parsedPt = parsePt(summary[i].pt, false);
+    text(`${parsedPt}`, 'mono')
+      .move(PTPos, Padding + (i + 1) * LineHeight)
+      .dy(DY)
+      .fill(parsedPt.startsWith('-') ? 'green' : 'red');
   }
 
   // get your svg as string

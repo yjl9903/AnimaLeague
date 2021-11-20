@@ -48706,7 +48706,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.draw = exports.setupFonts = void 0;
+exports.drawSummary = exports.draw = exports.setupFonts = void 0;
 const path = __importStar(__nccwpck_require__(5622));
 const core = __importStar(__nccwpck_require__(5924));
 const klaw_1 = __importDefault(__nccwpck_require__(9574));
@@ -48827,6 +48827,70 @@ function draw(record) {
     return canvas.svg();
 }
 exports.draw = draw;
+function drawSummary(summary) {
+    const window = (0, svgdom_1.createSVGWindow)();
+    const document = window.document;
+    (0, svg_js_1.registerWindow)(window, document);
+    const Padding = 20;
+    const Width = 600;
+    const LineHeight = 60;
+    const Height = Padding * 2 + LineHeight * (summary.length + 1);
+    const FontSize = 36;
+    const FontOffset = Math.round((LineHeight - FontSize) / 2);
+    const canvas = (0, svg_js_1.SVG)(document.documentElement).size(Width, Height);
+    // canvas
+    //   .rect(Width, Height)
+    //   .fill("white")
+    //   .stroke({ color: "#f06", opacity: 0.6, width: 5 });
+    const text = (t, family = 'mono') => canvas.text(t).font({
+        family: selectFont(family),
+        size: FontSize,
+        anchor: 'middle',
+        leading: '1.5em'
+    });
+    const RankPos = Padding + 20;
+    const AnimalPos = 120;
+    const ScorePos = 220;
+    const PTPos = 400;
+    const Rank = text('顺位')
+        .font('size', 24)
+        .move(RankPos, FontOffset + Padding);
+    const Animal = text('动物')
+        .font('size', 24)
+        .move(AnimalPos, FontOffset + Padding);
+    text('场数')
+        .font('size', 24)
+        .move(ScorePos, FontOffset + Padding);
+    text('PT')
+        .font('size', 24)
+        .move(PTPos, FontOffset + Padding)
+        .dx(16);
+    for (let i = 0; i < summary.length; i++) {
+        const line = canvas
+            .line(Padding, Padding + (i + 1) * LineHeight, Width - Padding, Padding + (i + 1) * LineHeight)
+            .stroke({ width: 1, color: '#2c3e50' })
+            .dy(FontOffset - 16);
+        if (i === 0) {
+            line.stroke({ width: 2 });
+        }
+        const DY = FontOffset + FontOffset - 20;
+        const rank = text(`${i + 1}`, 'mono').move(RankPos, Padding + (i + 1) * LineHeight);
+        rank.dx((Rank.length() - rank.length()) / 2).dy(DY);
+        const animal = text(`${summary[i].name}`).move(AnimalPos, Padding + (i + 1) * LineHeight);
+        animal.dx((Animal.length() - animal.length()) / 2).dy(DY);
+        text(`${summary[i].round}`, 'mono')
+            .move(ScorePos, Padding + (i + 1) * LineHeight)
+            .dy(DY);
+        const parsedPt = (0, utils_1.parsePt)(summary[i].pt, false);
+        text(`${parsedPt}`, 'mono')
+            .move(PTPos, Padding + (i + 1) * LineHeight)
+            .dy(DY)
+            .fill(parsedPt.startsWith('-') ? 'green' : 'red');
+    }
+    // get your svg as string
+    return canvas.svg();
+}
+exports.drawSummary = drawSummary;
 
 
 /***/ }),
@@ -48913,8 +48977,6 @@ function printSummary(records) {
             addTo(rank.name, rank.pt);
         }
     }
-    if (report.size === 0)
-        return;
     const sorted = [...report.values()].sort((lhs, rhs) => {
         if (lhs.pt !== rhs.pt) {
             return rhs.pt - lhs.pt;
@@ -48926,12 +48988,15 @@ function printSummary(records) {
             return lhs.name.localeCompare(rhs.name);
         }
     });
+    if (report.size === 0)
+        return sorted;
     core.startGroup(`${(0, kolorist_1.bold)('Summary')} - ${(0, kolorist_1.blue)('Top')} ${sorted[0].name} ${(0, utils_1.parsePt)(sorted[0].pt)}`);
     for (let i = 0; i < sorted.length; i++) {
         const { name, round, pt } = sorted[i];
         core.info(`${i + 1} ${name}: ${(0, kolorist_1.bold)(round)} rounds ${(0, utils_1.parsePt)(pt)}`);
     }
     core.endGroup();
+    return sorted;
 }
 function load() {
     var e_1, _a;
@@ -48970,12 +49035,16 @@ function load() {
         return records;
     });
 }
-function drawRecords(records) {
+function drawRecords(records, summary) {
     return __awaiter(this, void 0, void 0, function* () {
         yield (0, draw_1.setupFonts)();
         for (const record of records) {
             const svg = (0, draw_1.draw)(record);
             yield (0, fs_extra_1.writeFile)(path.join(OutDir, `${record.day}-${record.round}.svg`), svg);
+        }
+        {
+            const svg = (0, draw_1.drawSummary)(summary);
+            yield (0, fs_extra_1.writeFile)(path.join(process.cwd(), `summary.svg`), svg);
         }
     });
 }
@@ -48985,8 +49054,8 @@ function run() {
         yield (0, fs_extra_1.ensureDir)(OutDir);
         const records = yield load();
         printRecords(records);
-        printSummary(records);
-        drawRecords(records);
+        const summary = printSummary(records);
+        drawRecords(records, summary);
     });
 }
 run();

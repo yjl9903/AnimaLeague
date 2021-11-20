@@ -1,5 +1,7 @@
 # AnimaLeague
 
+![summary](./summary.svg)
+
 ## Day 1
 
 ### Round 1
