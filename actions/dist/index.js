@@ -48715,7 +48715,7 @@ const svgdom_1 = __nccwpck_require__(8609);
 const svg_js_1 = __nccwpck_require__(8915);
 const utils_1 = __nccwpck_require__(1725);
 const FontMappings = {};
-function selectFont() {
+function selectFont(type = 'normal') {
     for (const font in FontMappings) {
         if (font.startsWith("OpenSans"))
             continue;
@@ -48776,10 +48776,10 @@ function draw(record) {
     const AnimalPos = 120;
     const ScorePos = 240;
     const PTPos = 450;
-    text("顺位")
+    const Rank = text("顺位")
         .font("size", 24)
         .move(RankPos, FontOffset + Padding);
-    text("动物")
+    const Animal = text("动物")
         .font("size", 24)
         .move(AnimalPos, FontOffset + Padding);
     text("得点")
@@ -48796,19 +48796,20 @@ function draw(record) {
         if (i === 0) {
             line.stroke({ width: 2 });
         }
-        text(`${i + 1}`)
-            .move(RankPos, Padding + (i + 1) * LineHeight)
-            .dy(FontOffset + FontOffset - 16);
-        text(`${record.rank[i].name}`)
+        const DY = FontOffset + FontOffset - 20;
+        const rank = text(`${i + 1}`);
+        rank.move(RankPos + (Rank.length() - rank.length()) / 2, Padding + (i + 1) * LineHeight + DY);
+        const animal = text(`${record.rank[i].name}`)
             .move(AnimalPos, Padding + (i + 1) * LineHeight)
-            .dy(FontOffset + FontOffset - 16);
+            .dy(DY);
+        animal.dx((Animal.length() - animal.length()) / 2);
         text(`${record.rank[i].score}`)
             .move(ScorePos, Padding + (i + 1) * LineHeight)
-            .dy(FontOffset + FontOffset - 16);
+            .dy(DY);
         const parsedPt = (0, utils_1.parsePt)(record.rank[i].pt, false);
         text(`${parsedPt}`)
             .move(PTPos, Padding + (i + 1) * LineHeight)
-            .dy(FontOffset + FontOffset - 16)
+            .dy(DY)
             .fill(parsedPt.startsWith("-") ? "green" : "red");
     }
     // get your svg as string
