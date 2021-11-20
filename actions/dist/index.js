@@ -48778,20 +48778,21 @@ function draw(record) {
     });
     const RankPos = Padding + 20;
     const AnimalPos = 120;
-    const ScorePos = 240;
-    const PTPos = 420;
+    const ScorePos = 220;
+    const PTPos = 400;
     const Rank = text('顺位')
         .font('size', 24)
         .move(RankPos, FontOffset + Padding);
     const Animal = text('动物')
         .font('size', 24)
         .move(AnimalPos, FontOffset + Padding);
-    text('得点')
+    const Score = text('得点')
         .font('size', 24)
         .move(ScorePos, FontOffset + Padding);
     text('PT')
         .font('size', 24)
         .move(PTPos, FontOffset + Padding);
+    const scores = [];
     for (let i = 0; i < record.rank.length; i++) {
         const line = canvas
             .line(Padding, Padding + (i + 1) * LineHeight, Width - Padding, Padding + (i + 1) * LineHeight)
@@ -48805,14 +48806,21 @@ function draw(record) {
         rank.dx((Rank.length() - rank.length()) / 2).dy(DY);
         const animal = text(`${record.rank[i].name}`).move(AnimalPos, Padding + (i + 1) * LineHeight);
         animal.dx((Animal.length() - animal.length()) / 2).dy(DY);
-        text(`${record.rank[i].score}`, 'mono')
+        scores.push(text(`${record.rank[i].score}`, 'mono')
             .move(ScorePos, Padding + (i + 1) * LineHeight)
-            .dy(DY);
+            .dy(DY));
         const parsedPt = (0, utils_1.parsePt)(record.rank[i].pt, false);
         text(`${parsedPt}`, 'mono')
             .move(PTPos, Padding + (i + 1) * LineHeight)
             .dy(DY)
             .fill(parsedPt.startsWith('-') ? 'green' : 'red');
+    }
+    {
+        const len = scores.reduce((mx, s) => Math.max(mx, s.length()), 0);
+        for (const s of scores) {
+            s.dx(len - s.length());
+        }
+        Score.x(scores[0].x() + scores[0].length() - Score.length() - 12);
     }
     // get your svg as string
     return canvas.svg();
