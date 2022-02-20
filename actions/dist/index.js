@@ -49037,7 +49037,7 @@ function load() {
     });
 }
 function replaceSection(raw, tag, content) {
-    const reg = new RegExp(`<!-- START_SECTION: ${tag} -->(.*)<!-- END_SECTION: ${tag} -->`, 'g');
+    const reg = new RegExp(`<!-- START_SECTION: ${tag} -->([\s\S]*)<!-- END_SECTION: ${tag} -->`, 'g');
     raw.replace(reg, `<!-- START_SECTION: ${tag} -->\n${content}\n<!-- END_SECTION: ${tag} -->`);
 }
 function drawRecords(records, summary) {
