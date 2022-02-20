@@ -49038,7 +49038,7 @@ function load() {
 }
 function replaceSection(raw, tag, content) {
     const reg = new RegExp(`<!-- START_SECTION: ${tag} -->([\s\S]*)<!-- END_SECTION: ${tag} -->`, 'g');
-    raw.replace(reg, `<!-- START_SECTION: ${tag} -->\n${content}\n<!-- END_SECTION: ${tag} -->`);
+    return raw.replace(reg, `<!-- START_SECTION: ${tag} -->\n${content}\n<!-- END_SECTION: ${tag} -->`);
 }
 function drawRecords(records, summary) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -49054,7 +49054,6 @@ function drawRecords(records, summary) {
         }
         {
             const readme = (yield (0, fs_extra_1.readFile)('README.md')).toString();
-            replaceSection(readme, 'summary', '![summary](./summary.svg)');
             const day = [];
             for (const record of records) {
                 if (record.round === 1) {
@@ -49063,7 +49062,9 @@ function drawRecords(records, summary) {
                 day.push(`### Round ${record.round}`);
                 day.push(`![${record.day}-${record.round}](${record.filename})`);
             }
-            replaceSection(readme, 'day', day.join('\n\n'));
+            const newReadme1 = replaceSection(readme, 'summary', '![summary](./summary.svg)');
+            const newReadme2 = replaceSection(newReadme1, 'day', day.join('\n\n'));
+            yield (0, fs_extra_1.writeFile)('README.md', newReadme2);
         }
     });
 }

@@ -106,7 +106,7 @@ async function load() {
 
 function replaceSection(raw: string, tag: string, content: string) {
   const reg = new RegExp(`<!-- START_SECTION: ${tag} -->([\s\S]*)<!-- END_SECTION: ${tag} -->`, 'g');
-  raw.replace(reg, `<!-- START_SECTION: ${tag} -->\n${content}\n<!-- END_SECTION: ${tag} -->`);
+  return raw.replace(reg, `<!-- START_SECTION: ${tag} -->\n${content}\n<!-- END_SECTION: ${tag} -->`);
 }
 
 async function drawRecords(records: IRecord[], summary: Summary) {
@@ -122,7 +122,6 @@ async function drawRecords(records: IRecord[], summary: Summary) {
   }
   {
     const readme = (await readFile('README.md')).toString();
-    replaceSection(readme, 'summary', '![summary](./summary.svg)');
     const day = [];
     for (const record of records) {
       if (record.round === 1) {
@@ -131,7 +130,9 @@ async function drawRecords(records: IRecord[], summary: Summary) {
       day.push(`### Round ${record.round}`);
       day.push(`![${record.day}-${record.round}](${record.filename})`);
     }
-    replaceSection(readme, 'day', day.join('\n\n'));
+    const newReadme1 = replaceSection(readme, 'summary', '![summary](./summary.svg)');
+    const newReadme2 = replaceSection(newReadme1, 'day', day.join('\n\n'));
+    await writeFile('README.md', newReadme2);
   }
 }
 
