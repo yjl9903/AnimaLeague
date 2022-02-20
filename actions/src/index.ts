@@ -123,7 +123,7 @@ async function drawRecords(records: IRecord[], summary: Summary) {
         day.push(`## Day ${record.day}`);
       }
       day.push(`### Round ${record.round}`);
-      day.push(`![${record.day}-${record.round}](${record.filename})`);
+      day.push(`![${record.day}-${record.round}](${path.relative(process.cwd(), record.filename)})`);
     }
     const newReadme = readme.replace(
       /<!-- START_SECTION: day -->([\s\S]*)<!-- END_SECTION: day -->/g,
