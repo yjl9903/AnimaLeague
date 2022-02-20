@@ -1,7 +1,10 @@
 # AnimaLeague
 
+<!-- START_SECTION: summary -->
 ![summary](./summary.svg)
+<!-- END_SECTION: summary -->
 
+<!-- START_SECTION: day -->
 ## Day 1
 
 ### Round 1
@@ -47,3 +50,4 @@
 ### Round 4
 
 ![3-4](./record/3-4.svg)
+<!-- END_SECTION: day -->

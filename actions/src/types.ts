@@ -1,4 +1,5 @@
 export interface IRecord {
+  filename: string;
   day: number;
   round: number;
   rank: IRank[];

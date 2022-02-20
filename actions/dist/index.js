@@ -49014,6 +49014,7 @@ function load() {
                     try {
                         const content = (yield (0, fs_extra_1.readFile)(file.path)).toString().replace(/\r?\n/, '\n').trim();
                         records.push({
+                            filename: path.join(OutDir, `${Number.parseInt(day)}-${Number.parseInt(round)}.svg`),
                             day: Number.parseInt(day),
                             round: Number.parseInt(round),
                             rank: (0, utils_1.parseRecord)(content)
@@ -49035,16 +49036,34 @@ function load() {
         return records;
     });
 }
+function replaceSection(raw, tag, content) {
+    const reg = new RegExp(`<!-- START_SECTION: ${tag} -->(.*)<!-- END_SECTION: ${tag} -->`, 'g');
+    raw.replace(reg, `<!-- START_SECTION: ${tag} -->\n${content}\n<!-- END_SECTION: ${tag} -->`);
+}
 function drawRecords(records, summary) {
     return __awaiter(this, void 0, void 0, function* () {
         yield (0, draw_1.setupFonts)();
         for (const record of records) {
             const svg = (0, draw_1.draw)(record);
-            yield (0, fs_extra_1.writeFile)(path.join(OutDir, `${record.day}-${record.round}.svg`), svg);
+            yield (0, fs_extra_1.writeFile)(record.filename, svg);
         }
         {
+            const summaryFile = path.join(process.cwd(), `summary.svg`);
             const svg = (0, draw_1.drawSummary)(summary);
-            yield (0, fs_extra_1.writeFile)(path.join(process.cwd(), `summary.svg`), svg);
+            yield (0, fs_extra_1.writeFile)(summaryFile, svg);
+        }
+        {
+            const readme = (yield (0, fs_extra_1.readFile)('README.md')).toString();
+            replaceSection(readme, 'summary', '![summary](./summary.svg)');
+            const day = [];
+            for (const record of records) {
+                if (record.round === 1) {
+                    day.push(`## Day ${record.day}`);
+                }
+                day.push(`### Round ${record.round}`);
+                day.push(`![${record.day}-${record.round}](${record.filename})`);
+            }
+            replaceSection(readme, 'day', day.join('\n\n'));
         }
     });
 }

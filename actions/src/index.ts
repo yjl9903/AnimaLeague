@@ -90,6 +90,7 @@ async function load() {
       try {
         const content = (await readFile(file.path)).toString().replace(/\r?\n/, '\n').trim();
         records.push({
+          filename: path.join(OutDir, `${Number.parseInt(day)}-${Number.parseInt(round)}.svg`),
           day: Number.parseInt(day),
           round: Number.parseInt(round),
           rank: parseRecord(content)
@@ -103,15 +104,34 @@ async function load() {
   return records;
 }
 
+function replaceSection(raw: string, tag: string, content: string) {
+  const reg = new RegExp(`<!-- START_SECTION: ${tag} -->(.*)<!-- END_SECTION: ${tag} -->`, 'g');
+  raw.replace(reg, `<!-- START_SECTION: ${tag} -->\n${content}\n<!-- END_SECTION: ${tag} -->`);
+}
+
 async function drawRecords(records: IRecord[], summary: Summary) {
   await setupFonts();
   for (const record of records) {
     const svg = draw(record);
-    await writeFile(path.join(OutDir, `${record.day}-${record.round}.svg`), svg);
+    await writeFile(record.filename, svg);
   }
   {
+    const summaryFile = path.join(process.cwd(), `summary.svg`);
     const svg = drawSummary(summary);
-    await writeFile(path.join(process.cwd(), `summary.svg`), svg);
+    await writeFile(summaryFile, svg);
+  }
+  {
+    const readme = (await readFile('README.md')).toString();
+    replaceSection(readme, 'summary', '![summary](./summary.svg)');
+    const day = [];
+    for (const record of records) {
+      if (record.round === 1) {
+        day.push(`## Day ${record.day}`);
+      }
+      day.push(`### Round ${record.round}`);
+      day.push(`![${record.day}-${record.round}](${record.filename})`);
+    }
+    replaceSection(readme, 'day', day.join('\n\n'));
   }
 }
 
