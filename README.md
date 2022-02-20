@@ -9,51 +9,51 @@
 
 ### Round 1
 
-![1-1](/home/runner/work/AnimaLeague/AnimaLeague/record/1-1.svg)
+![1-1](record/1-1.svg)
 
 ### Round 2
 
-![1-2](/home/runner/work/AnimaLeague/AnimaLeague/record/1-2.svg)
+![1-2](record/1-2.svg)
 
 ### Round 3
 
-![1-3](/home/runner/work/AnimaLeague/AnimaLeague/record/1-3.svg)
+![1-3](record/1-3.svg)
 
 ## Day 2
 
 ### Round 1
 
-![2-1](/home/runner/work/AnimaLeague/AnimaLeague/record/2-1.svg)
+![2-1](record/2-1.svg)
 
 ### Round 2
 
-![2-2](/home/runner/work/AnimaLeague/AnimaLeague/record/2-2.svg)
+![2-2](record/2-2.svg)
 
 ### Round 3
 
-![2-3](/home/runner/work/AnimaLeague/AnimaLeague/record/2-3.svg)
+![2-3](record/2-3.svg)
 
 ## Day 3
 
 ### Round 1
 
-![3-1](/home/runner/work/AnimaLeague/AnimaLeague/record/3-1.svg)
+![3-1](record/3-1.svg)
 
 ### Round 2
 
-![3-2](/home/runner/work/AnimaLeague/AnimaLeague/record/3-2.svg)
+![3-2](record/3-2.svg)
 
 ### Round 3
 
-![3-3](/home/runner/work/AnimaLeague/AnimaLeague/record/3-3.svg)
+![3-3](record/3-3.svg)
 
 ### Round 4
 
-![3-4](/home/runner/work/AnimaLeague/AnimaLeague/record/3-4.svg)
+![3-4](record/3-4.svg)
 
 ## Day 4
 
 ### Round 1
 
-![4-1](/home/runner/work/AnimaLeague/AnimaLeague/record/4-1.svg)
+![4-1](record/4-1.svg)
 <!-- END_SECTION: day -->
