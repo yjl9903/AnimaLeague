@@ -49064,7 +49064,7 @@ function drawRecords(records, summary) {
             }
             const newReadme1 = replaceSection(readme, 'summary', '![summary](./summary.svg)');
             const newReadme2 = replaceSection(newReadme1, 'day', day.join('\n\n'));
-            console.log(newReadme2);
+            console.log(day, newReadme2);
             yield (0, fs_extra_1.writeFile)('README.md', newReadme2);
         }
     });
