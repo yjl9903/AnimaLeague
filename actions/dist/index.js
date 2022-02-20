@@ -49036,10 +49036,6 @@ function load() {
         return records;
     });
 }
-function replaceSection(raw, tag, content) {
-    const reg = new RegExp(`<!-- START_SECTION: ${tag} -->([\s\S]*)<!-- END_SECTION: ${tag} -->`, 'g');
-    return raw.replace(reg, `<!-- START_SECTION: ${tag} -->\n${content}\n<!-- END_SECTION: ${tag} -->`);
-}
 function drawRecords(records, summary) {
     return __awaiter(this, void 0, void 0, function* () {
         yield (0, draw_1.setupFonts)();
@@ -49062,10 +49058,8 @@ function drawRecords(records, summary) {
                 day.push(`### Round ${record.round}`);
                 day.push(`![${record.day}-${record.round}](${record.filename})`);
             }
-            const newReadme1 = replaceSection(readme, 'summary', '![summary](./summary.svg)');
-            const newReadme2 = replaceSection(newReadme1, 'day', day.join('\n\n'));
-            console.log(day, newReadme2);
-            yield (0, fs_extra_1.writeFile)('README.md', newReadme2);
+            const newReadme = readme.replace(/<!-- START_SECTION: day -->([\s\S]*)<!-- END_SECTION: day -->/g, `<!-- START_SECTION: day -->\n${day.join('\n\n')}\n<!-- END_SECTION: day -->`);
+            yield (0, fs_extra_1.writeFile)('README.md', newReadme);
         }
     });
 }

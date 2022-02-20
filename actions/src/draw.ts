@@ -105,9 +105,11 @@ export function draw(record: IRecord) {
     const animal = text(`${record.rank[i].name}`).move(AnimalPos, Padding + (i + 1) * LineHeight);
     animal.dx((Animal.length() - animal.length()) / 2).dy(DY);
 
-    scores.push(text(`${record.rank[i].score}`, 'mono')
-      .move(ScorePos, Padding + (i + 1) * LineHeight)
-      .dy(DY));
+    scores.push(
+      text(`${record.rank[i].score}`, 'mono')
+        .move(ScorePos, Padding + (i + 1) * LineHeight)
+        .dy(DY)
+    );
 
     const parsedPt = parsePt(record.rank[i].pt, false);
     text(`${parsedPt}`, 'mono')
