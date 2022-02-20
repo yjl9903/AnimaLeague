@@ -49056,7 +49056,7 @@ function drawRecords(records, summary) {
                     day.push(`## Day ${record.day}`);
                 }
                 day.push(`### Round ${record.round}`);
-                day.push(`![${record.day}-${record.round}](${record.filename})`);
+                day.push(`![${record.day}-${record.round}](${path.relative(process.cwd(), record.filename)})`);
             }
             const newReadme = readme.replace(/<!-- START_SECTION: day -->([\s\S]*)<!-- END_SECTION: day -->/g, `<!-- START_SECTION: day -->\n${day.join('\n\n')}\n<!-- END_SECTION: day -->`);
             yield (0, fs_extra_1.writeFile)('README.md', newReadme);
