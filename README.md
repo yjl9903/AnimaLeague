@@ -50,10 +50,4 @@
 ### Round 4
 
 ![3-4](record/3-4.svg)
-
-## Day 4
-
-### Round 1
-
-![4-1](record/4-1.svg)
 <!-- END_SECTION: day -->
