@@ -66,4 +66,8 @@
 ### Round 1
 
 ![5-1](record/5-1.svg)
+
+### Round 2
+
+![5-2](record/5-2.svg)
 <!-- END_SECTION: day -->
