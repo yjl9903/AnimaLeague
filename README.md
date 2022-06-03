@@ -70,4 +70,10 @@
 ### Round 2
 
 ![5-2](record/5-2.svg)
+
+## Day 6
+
+### Round 1
+
+![6-1](record/6-1.svg)
 <!-- END_SECTION: day -->
