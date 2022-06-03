@@ -80,4 +80,8 @@
 ### Round 2
 
 ![6-2](record/6-2.svg)
+
+### Round 3
+
+![6-3](record/6-3.svg)
 <!-- END_SECTION: day -->
