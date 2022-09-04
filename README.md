@@ -90,4 +90,8 @@
 ### Round 1
 
 ![7-1](record/7-1.svg)
+
+### Round 2
+
+![7-2](record/7-2.svg)
 <!-- END_SECTION: day -->
