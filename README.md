@@ -100,4 +100,8 @@
 ### Round 1
 
 ![8-1](record/8-1.svg)
+
+### Round 2
+
+![8-2](record/8-2.svg)
 <!-- END_SECTION: day -->
