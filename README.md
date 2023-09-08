@@ -116,4 +116,8 @@
 ### Round 5
 
 ![8-5](record/8-5.svg)
+
+### Round 6
+
+![8-6](record/8-6.svg)
 <!-- END_SECTION: day -->
