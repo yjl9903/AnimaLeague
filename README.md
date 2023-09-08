@@ -94,4 +94,10 @@
 ### Round 2
 
 ![7-2](record/7-2.svg)
+
+## Day 8
+
+### Round 1
+
+![8-1](record/8-1.svg)
 <!-- END_SECTION: day -->
