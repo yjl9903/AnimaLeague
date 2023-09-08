@@ -104,4 +104,8 @@
 ### Round 2
 
 ![8-2](record/8-2.svg)
+
+### Round 3
+
+![8-3](record/8-3.svg)
 <!-- END_SECTION: day -->
